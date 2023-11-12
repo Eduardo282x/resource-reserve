@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [data, setData] = useState({ UserName: "", UserPassword: "" });
-  const [responseApi, setResponseApi] = useState({message: '', success: false})
+  const [responseApi, setResponseApi] = useState({message: '', success: false, userData: {}})
   const [open, setOpen] = useState(false);
   const [btn, setBtn] = useState(true);
   const state = {
@@ -35,13 +35,11 @@ export const Login = () => {
   };
   const handleSubmit = (event) => {
     event.preventDefault();
-    axios
-      .post("/authentication", data)
-      .then((response) => {
-        console.log(response.data);
-        if(response){
+    axios.post("/authentication", data).then((response) => {
+        if(response && response.data.success){
           setResponseApi(response.data);
           setOpen(true);
+          localStorage.setItem('userData', JSON.stringify(response.data.userData))
           setTimeout(() => {
             navigate('/home')
           }, 1500);

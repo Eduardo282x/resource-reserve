@@ -1,0 +1,34 @@
+.layout{
+    width: 95vw;
+    height: 4rem;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    align-items: center;
+    position: absolute;
+    top: 2rem;
+    border: 2px solid ;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 1rem;
+}
+
+.itemMenu{
+    color: #000;
+}
+
+.homeIcon{
+    color: #000;
+    width: 5rem;
+    height: 3.5rem;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    border: 2px solid;
+    background-image: url('../../assets/icons/materiales-educativos.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #242424;
+}
