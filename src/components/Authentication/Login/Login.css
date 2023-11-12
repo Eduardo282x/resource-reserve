@@ -1,0 +1,26 @@
+.inputWidth{
+    width: 20rem;
+}
+
+.login{
+    display: flex;
+    width: auto;
+    height: auto;
+    align-items: center;
+    gap: 2rem;
+    justify-content: center;
+    flex-direction: column;
+    background: #fff;
+    color: #000;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.titleForm{
+    font-size: 2rem;
+}
+
+.snack {
+    display: flex;
+    justify-content: space-between;
+  }
