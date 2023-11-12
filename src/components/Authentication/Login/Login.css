@@ -2,9 +2,21 @@
     width: 20rem;
 }
 
-.login{
+.bodyLogin{
+    width: 100vw;
+    height: 100vh;
     display: flex;
     align-items: center;
+    justify-content: center;
+    background-color: #242424;
+}
+
+.login{
+    display: flex;
+    width: auto;
+    height: auto;
+    align-items: center;
+    gap: 2rem;
     justify-content: center;
     flex-direction: column;
     background: #fff;
@@ -12,3 +24,12 @@
     padding: 1rem;
     border-radius: 1rem;
 }
+
+.titleForm{
+    font-size: 2rem;
+}
+
+.snack {
+    display: flex;
+    justify-content: space-between;
+  }
