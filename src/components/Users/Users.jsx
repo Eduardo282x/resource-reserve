@@ -1,13 +1,15 @@
 import axios from "../../env/axios-instance";
 import { useEffect, useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
 import "./users.css";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
-
+import { Card } from "../Shared/Card/Card";
+import Snackbar from '@mui/material/Snackbar';
+import Swal from "sweetalert2";
 export const Users = () => {
   const [rows, setRows] = useState([]);
+  const add = [true]
+
+  const [responseApi, setResponseApi] = useState({message: ''})
+  const [open, setOpen] = useState(false);
 
 //   const [page, setPage] = useState(1);
 //   const rowsPerPage = 5;
@@ -23,6 +25,7 @@ export const Users = () => {
 
   const clearRows = () => {
     setRows([]);
+    console.log(rows);
   };
 
   const columns = [
@@ -48,6 +51,22 @@ export const Users = () => {
     },
   ];
 
+  
+  const childData = (data) => {
+    if(data.name == 'delete'){  
+      deleteUser(data.data)
+    }
+
+    if(data.name == 'edit'){  
+      console.log(data.data);
+    }
+
+    if(data.name == 'add'){  
+      console.log('Agregar');
+    }
+
+  }
+
   const getUser = () => {
     axios
       .get("/users/show")
@@ -64,69 +83,51 @@ export const Users = () => {
       });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await getUser();
-    };
+  const deleteUser = (userId) => {
+    Swal.fire({
+      // title: 'Error!',
+      text: 'Estas seguro que deseas eliminar este usuario?',
+      // icon: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'Si',
+      confirmButtonColor: 'blue',
+      cancelButtonText: 'No',
+      cancelButtonColor: 'red',
+      position: "center",
+    }).then((result) => {
+      if(result.isConfirmed){
+        axios
+        .delete(`/users/delete/${userId}`)
+        .then((response) => {
+          setResponseApi(response.data);
+          setOpen(true);
+          setTimeout(() => {
+            
+            setOpen(false)
+          }, 1500);
+          getUser();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }
+    })
+  };
 
-    fetchData();
+  useEffect(() => {
+    getUser();
   }, []);
 
   return (
     <div>
-      Users
-      <Table
-        aria-label="users"
-        // selectionMode="single" 
-        // defaultSelectedKeys={["2"]} 
-        color="primary"
-        // bottomContent={
-        //   <div className="flex w-full justify-center">
-        //     <Pagination
-        //       isCompact
-        //       showControls
-        //       showShadow
-        //       color="secondary"
-        //       page={page}
-        //       total={pages}
-        //       onChange={(page) => setPage(page)}
-        //     />
-        //   </div>
-        // }
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.key} className="headerTable">{column.label}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody>
-          {rows.map((item) => (
-            <TableRow key={item.Id} className="textTable">
-              <TableCell>{item.Name}</TableCell>
-              <TableCell>{item.Lastname}</TableCell>
-              <TableCell>{item.Rol}</TableCell>
-              <TableCell>
-                    <IconButton
-                    aria-label="toggle password visibility"
-                    color="primary"
-                    edge="end"
-                    >
-                    {<EditIcon />}
-                    </IconButton>
-                </TableCell>
-              <TableCell>
-                    <IconButton
-                    aria-label="toggle password visibility"
-                    color="error"
-                    edge="end"
-                    >
-                    {<DeleteIcon />}
-                    </IconButton>
-                </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Card title="Usuarios" dataTable={rows} columns={columns} sendFunc={childData} customBtn={add}/>
+
+          <Snackbar
+              open={open}
+              autoHideDuration={1000}
+              className="snack"
+              message={responseApi.message}
+            />
     </div>
   );
 };
