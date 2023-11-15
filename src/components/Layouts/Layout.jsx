@@ -25,6 +25,10 @@ export const Layout = () => {
       label: "Inicio",
     },
     {
+      key: "inventory",
+      label: "Inventario",
+    },
+    {
       key: "users",
       label: "Usuarios",
     },

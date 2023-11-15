@@ -1,0 +1,55 @@
+.titleCard{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    /* margin-left: 2rem; */
+    padding: 0 2rem;
+    color: #000;
+    font-weight: 600;
+}
+
+.cardDisplay{
+    width: 90vw;
+    height: 60vh;
+    background: #fff;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.btnBack{
+    transition: .5s;
+    transform: translateX(0);
+}
+
+.btnBack:hover{
+    transition: .5s;
+    transform: translateX(-10px);
+}
+
+.bodyCard{
+    width: 95%;
+    margin-top: 1rem;
+    /* overflow-y: auto; */
+}
+
+.maxContent{
+    background-color: #000;
+}
+
+.textTable{
+    color: #000;
+}
+
+
+.inputSearch{
+    width: 20rem !important;
+}
+
+.headerTable{
+    color: #000 !important;
+    font-weight: bold !important;
+}
