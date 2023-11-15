@@ -1,10 +1,11 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Card } from "../Shared/Card/Card";
 
 export const Inventory = () => {
 
-    const [rows, setRows] = useState([{description: 'Articulo 1'},{description: 'Articulo 2'}]);
+    const rows = [{description: 'Articulo 1'},{description: 'Articulo 2'}]
     const add = [true, true];
+    
 
     const col = ['description'];
 

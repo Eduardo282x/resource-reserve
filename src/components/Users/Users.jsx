@@ -23,10 +23,10 @@ export const Users = () => {
   //     return rows.slice(start, end);
   //   }, [page, rows]);
 
-  const clearRows = () => {
-    setRows([]);
-    console.log(rows);
-  };
+  // const clearRows = () => {
+  //   setRows([]);
+  //   console.log(rows);
+  // };
 
   const col = ['Name','Lastname','Rol',];
 
@@ -89,12 +89,13 @@ export const Users = () => {
     axios
       .get("/users/show")
       .then((response) => {
-        clearRows();
-        const tempRows = [...rows];
-        response.data.forEach((user) => {
-          tempRows.push(user);
-        });
-        setRows(tempRows);
+        // clearRows();
+        setRows(response.data)
+        // const tempRows = [...rows];
+        // response.data.forEach((user) => {
+        //   tempRows.push(user);
+        // });
+        // setRows(tempRows);
       })
       .catch((error) => {
         console.log(error);
@@ -119,6 +120,7 @@ export const Users = () => {
           .then((response) => {
             setResponseApi(response.data);
             setOpen(true);
+            getUser()
             setTimeout(() => {
               setOpen(false);
             }, 1500);
