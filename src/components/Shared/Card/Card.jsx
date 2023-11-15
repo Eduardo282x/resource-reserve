@@ -14,9 +14,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
 import { Button } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@nextui-org/react";
 import AddIcon from "@mui/icons-material/Add";
 
-export const Card = ({ title, dataTable, columns, sendFunc, customBtn }) => {
+export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn }) => {
   const navigate = useNavigate();
 
   const back = () => {
@@ -26,6 +27,10 @@ export const Card = ({ title, dataTable, columns, sendFunc, customBtn }) => {
   const onEdit = (data) => {
     sendFunc({ name: "edit", data: data });
   };
+
+  const onSearch = (event) => {
+    sendFunc({ name: "search", data: event.target.value });
+  }
 
   const onAdd = () => {
     sendFunc({ name: "add" });
@@ -38,7 +43,7 @@ export const Card = ({ title, dataTable, columns, sendFunc, customBtn }) => {
   return (
     <div className="cardDisplay">
       <div className="titleCard">
-        <div className="mainTitle">
+        <div className="flex items-center justify-center">
           <Button
             color="primary"
             variant="light"
@@ -51,19 +56,35 @@ export const Card = ({ title, dataTable, columns, sendFunc, customBtn }) => {
           <h1>{title}</h1>
         </div>
 
-        {customBtn[0] && (
-          <div>
-            <Button
-              color="primary"
-              variant="light"
-              onClick={onAdd}
-              radius="full"
-              size="sm"
-            >
-              <AddIcon />
-            </Button>
-          </div>
-        )}
+        <div className="flex items-center justify-center">
+          {customBtn[1] && (
+            <div>
+              <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                <Input 
+                    type="text" 
+                    label="Buscar" 
+                    className="inputSearch" 
+                    onChange={onSearch}
+                    size="sm"  
+                />
+              </div>
+            </div>
+          )}
+
+          {customBtn[0] && (
+            <div>
+              <Button
+                color="primary"
+                variant="light"
+                onClick={onAdd}
+                radius="full"
+                size="sm"
+              >
+                <AddIcon />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
       <div className="bodyCard">
         <Table
@@ -93,11 +114,13 @@ export const Card = ({ title, dataTable, columns, sendFunc, customBtn }) => {
             )}
           </TableHeader>
           <TableBody className="maxContent">
-            {dataTable.map((item) => (
-              <TableRow key={item.Id} className="textTable">
-                <TableCell>{item.Name}</TableCell>
-                <TableCell>{item.Lastname}</TableCell>
-                <TableCell>{item.Rol}</TableCell>
+            {dataTable.map((item,index) => (
+              <TableRow key={index} className="textTable">
+                {colMap.map((col) => (
+                  <TableCell key={col}>{item[col]}</TableCell>
+                ))}
+                {/* <TableCell>{item.Lastname}</TableCell>
+                <TableCell>{item.Rol}</TableCell> */}
                 <TableCell>
                   <IconButton
                     aria-label="toggle password visibility"
@@ -132,5 +155,6 @@ Card.propTypes = {
   dataTable: PropTypes.any,
   columns: PropTypes.array,
   sendFunc: PropTypes.func,
-  customBtn: PropTypes.array,
+  colMap: PropTypes.array,
+  customBtn: (PropTypes.array = [false, false]),
 };
