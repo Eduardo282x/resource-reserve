@@ -1,47 +1,82 @@
-// import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "../Shared/Card/Card";
+import axios from "../../env/axios-instance";
 
 export const Inventory = () => {
+  const [rows, setRows] = useState([]);
+  const add = [true, true];
 
-    const rows = [{description: 'Articulo 1'},{description: 'Articulo 2'}]
-    const add = [true, true];
-    
+  const col = [
+    { columnName: "Description", type: "string" },
+    { columnName: "Amount", type: "string" },
+    { columnName: "Professor", type: "string" },
+    { columnName: "Classroom", type: "string" },
+    { columnName: "Date", type: "date" },
+  ];
 
-    const col = ['description'];
+  const columns = [
+    {
+      key: "Description",
+      label: "Descripción",
+    },
+    {
+      key: "Amount",
+      label: "Cantidad",
+    },
+    {
+      key: "Professor",
+      label: "Profesor",
+    },
+    {
+      key: "Classroom",
+      label: "Aula",
+    },
+    {
+      key: "Date",
+      label: "Fecha ingreso",
+    },
+    {
+      key: "Edit",
+      label: "Editar",
+    },
+    {
+      key: "Delete",
+      label: "Eliminar",
+    },
+  ];
 
-    const columns = [
-        {
-          key: "description",
-          label: "Descripción",
-        },
-        {
-          key: "Edit",
-          label: "Editar",
-        },
-        {
-          key: "Delete",
-          label: "Eliminar",
-        },
-      ];
+  const childData = (data) => {
+    if (data.name == "delete") {
+      //   deleteUser(data.data);
+    }
 
-      
-    const childData = (data) => {
-        if (data.name == "delete") {
-        //   deleteUser(data.data);
-        }
-    
-        if (data.name == "edit") {
-          console.log(data.data);
-        }
-    
-        if (data.name == "add") {
-          console.log("Agregar");
-        }
-    
-        if (data.name == "search") {
-          console.log(data.data);
-        }
-      };
+    if (data.name == "edit") {
+      console.log(data.data);
+    }
+
+    if (data.name == "add") {
+      console.log("Agregar");
+    }
+
+    if (data.name == "search") {
+      console.log(data.data);
+    }
+  };
+
+  const getInventory = () => {
+    axios
+      .get("/inventory/show")
+      .then((response) => {
+        setRows(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getInventory();
+  }, []);
 
   return (
     <div>

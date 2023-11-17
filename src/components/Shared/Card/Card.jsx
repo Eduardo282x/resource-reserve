@@ -40,6 +40,12 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
     sendFunc({ name: "delete", data: data });
   };
 
+  const parseDate = (dateParse) => {
+    const date = new Date(dateParse);
+    const formattedDate = date.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit'})
+    return formattedDate;
+  }
+
   return (
     <div className="cardDisplay">
       <div className="titleCard">
@@ -117,7 +123,11 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
             {dataTable.map((item,index) => (
               <TableRow key={index} className="textTable">
                 {colMap.map((col) => (
-                  <TableCell key={col}>{item[col]}</TableCell>
+                  <TableCell key={col.columnName}>
+                    {/* {col.columnName} */}
+                    {col.type == "string" ? (item[col.columnName] ? item[col.columnName] : '-') : ''}
+                    {col.type == "date" ? parseDate(item[col.columnName]) : ''}
+                  </TableCell>
                 ))}
                 {/* <TableCell>{item.Lastname}</TableCell>
                 <TableCell>{item.Rol}</TableCell> */}
@@ -156,5 +166,6 @@ Card.propTypes = {
   columns: PropTypes.array,
   sendFunc: PropTypes.func,
   colMap: PropTypes.array,
-  customBtn: (PropTypes.array = [false, false]),
+  customBtn: PropTypes.array = [false, false],
 };
+

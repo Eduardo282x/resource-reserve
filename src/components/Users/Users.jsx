@@ -1,9 +1,10 @@
-import axios from "../../env/axios-instance";
-import { useEffect, useState, useMemo } from "react";
-import "./users.css";
-import { Card } from "../Shared/Card/Card";
+import { useEffect, useState } from "react";
 import Snackbar from "@mui/material/Snackbar";
+import axios from "../../env/axios-instance";
+import { Card } from "../Shared/Card/Card";
 import Swal from "sweetalert2";
+import "./users.css";
+
 export const Users = () => {
   const [rows, setRows] = useState([]);
   const add = [true, true];
@@ -11,24 +12,11 @@ export const Users = () => {
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
 
-  //   const [page, setPage] = useState(1);
-  //   const rowsPerPage = 5;
-
-  //   const pages = Math.ceil(rows.length / rowsPerPage);
-
-  //   const items = useMemo(() => {
-  //     const start = (page - 1) * rowsPerPage;
-  //     const end = start + rowsPerPage;
-
-  //     return rows.slice(start, end);
-  //   }, [page, rows]);
-
-  // const clearRows = () => {
-  //   setRows([]);
-  //   console.log(rows);
-  // };
-
-  const col = ['Name','Lastname','Rol',];
+  const col = [
+    { columnName: "Name", type: "string" },
+    { columnName: "Lastname", type: "string" },
+    { columnName: "Rol", type: "string" },
+  ];
 
   const columns = [
     {
@@ -89,13 +77,7 @@ export const Users = () => {
     axios
       .get("/users/show")
       .then((response) => {
-        // clearRows();
         setRows(response.data)
-        // const tempRows = [...rows];
-        // response.data.forEach((user) => {
-        //   tempRows.push(user);
-        // });
-        // setRows(tempRows);
       })
       .catch((error) => {
         console.log(error);
@@ -120,7 +102,7 @@ export const Users = () => {
           .then((response) => {
             setResponseApi(response.data);
             setOpen(true);
-            getUser()
+            getUser();
             setTimeout(() => {
               setOpen(false);
             }, 1500);
@@ -131,11 +113,6 @@ export const Users = () => {
       }
     });
   };
-
-  useMemo(() => {
-    // getUser();
-    console.log("cambie");
-  }, [rows]);
 
   useEffect(() => {
     getUser();
