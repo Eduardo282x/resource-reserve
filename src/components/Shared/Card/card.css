@@ -33,7 +33,33 @@
 .bodyCard{
     width: 95%;
     margin-top: 1rem;
+    max-height: 18rem;
+    overflow-y: auto;
+    position: relative;
     /* overflow-y: auto; */
+}
+
+::-webkit-scrollbar {
+    background-color: #e4e4e7;
+    border-radius: 1rem;
+}
+
+::-webkit-scrollbar:vertical {
+    width:.65rem;
+}
+
+::-webkit-scrollbar-button:increment,::-webkit-scrollbar-button {
+    display: none;
+} 
+
+::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 1rem;
+    border: 2px solid #f1f2f3;
+}
+
+::-webkit-scrollbar-track {
+    border-radius: 10px;  
 }
 
 .maxContent{
@@ -44,7 +70,6 @@
     color: #000;
 }
 
-
 .inputSearch{
     width: 20rem !important;
 }
@@ -52,4 +77,10 @@
 .headerTable{
     color: #000 !important;
     font-weight: bold !important;
+    position: sticky;
+    top: 0;
+}
+
+.tableStyle{
+    position: relative;
 }

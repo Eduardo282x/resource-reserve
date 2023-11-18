@@ -1,28 +1,19 @@
+import {Table,TableHeader,TableColumn,TableBody,TableRow,TableCell,} from "@nextui-org/react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import { Button } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import PropTypes from "prop-types";
 import "./card.css";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@nextui-org/react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import { Button } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@nextui-org/react";
-import AddIcon from "@mui/icons-material/Add";
 
 export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn }) => {
   const navigate = useNavigate();
 
-  const back = () => {
-    navigate(-1);
-  };
+  const back = () => {navigate(-1);};
 
   const onEdit = (data) => {
     sendFunc({ name: "edit", data: data });
@@ -98,6 +89,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
           selectionMode="single"
           defaultSelectedKeys={["2"]}
           color="primary"
+          className="tableStyle"
           // bottomContent={
           //   <div className="flex w-full justify-center">
           //     <Pagination

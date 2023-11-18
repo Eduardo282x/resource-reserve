@@ -1,13 +1,28 @@
-import { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+  // Checkbox,
+  // Input,
+  // Link,
+} from "@nextui-org/react";
 import Snackbar from "@mui/material/Snackbar";
 import axios from "../../env/axios-instance";
+import { useEffect, useState } from "react";
 import { Card } from "../Shared/Card/Card";
 import Swal from "sweetalert2";
+import { FormGenerator } from "../Shared/Form/FormGenerator";
 import "./users.css";
 
 export const Users = () => {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [rows, setRows] = useState([]);
   const add = [true, true];
+
+  const backdrop = "blur";
+  // const [isOpen, setIsOpen] = useState(false)
 
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
@@ -51,7 +66,26 @@ export const Users = () => {
     }
 
     if (data.name == "add") {
+      onOpen();
+      // setIsOpen(true)
+      onOpen();
       console.log("Agregar");
+    }
+
+    if (data.name == "addUser") {
+      // onOpen();
+      console.log(data.data);
+      // setIsOpen(false)
+      onClose();
+      axios
+        .post("/users/add", data.data)
+        .then((response) => {
+          console.log(response);
+          getUser();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
 
     if (data.name == "search") {
@@ -77,7 +111,7 @@ export const Users = () => {
     axios
       .get("/users/show")
       .then((response) => {
-        setRows(response.data)
+        setRows(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -128,6 +162,24 @@ export const Users = () => {
         sendFunc={childData}
         customBtn={add}
       />
+
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="top-center"
+        backdrop={backdrop}
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex justify-center text-center text-black">
+              Agregar usuario
+            </ModalHeader>
+            <ModalBody>
+              <FormGenerator sendFunc={childData} />
+            </ModalBody>
+          </>
+        </ModalContent>
+      </Modal>
 
       <Snackbar
         open={open}
