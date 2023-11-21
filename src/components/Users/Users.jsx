@@ -23,6 +23,12 @@ export const Users = () => {
 
   const backdrop = "blur";
   // const [isOpen, setIsOpen] = useState(false)
+  const dataFormGenerator = { UserName: "", Name: "", Lastname: "" };
+  const labelData = [
+    { label: "Nombre de Usuario", val: "UserName", type:'string' },
+    { label: "Nombre", val: "Name", type:'string' },
+    { label: "Apellido", val: "Lastname", type:'string' },
+  ];
 
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
@@ -67,12 +73,10 @@ export const Users = () => {
 
     if (data.name == "add") {
       onOpen();
-      // setIsOpen(true)
-      onOpen();
       console.log("Agregar");
     }
 
-    if (data.name == "addUser") {
+    if (data.name == "dataApi") {
       // onOpen();
       console.log(data.data);
       // setIsOpen(false)
@@ -175,7 +179,11 @@ export const Users = () => {
               Agregar usuario
             </ModalHeader>
             <ModalBody>
-              <FormGenerator sendFunc={childData} />
+              <FormGenerator
+                sendFunc={childData}
+                dataForm={dataFormGenerator}
+                labelData={labelData}
+              />
             </ModalBody>
           </>
         </ModalContent>

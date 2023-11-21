@@ -3,52 +3,33 @@ import { useState } from "react";
 import "./formgenerator.css";
 import PropTypes from "prop-types";
 
-export const FormGenerator = ({ sendFunc }) => {
-  const [dataUser, setDataUser] = useState({
-    Name: "",
-    Lastname: "",
-    UserName: "",
-  });
+export const FormGenerator = ({ sendFunc, dataForm, labelData }) => {
+  const [dataFormGenerator, setDataUser] = useState(dataForm);
 
   const setData = (event) => {
     const { name, value } = event.target;
-    setDataUser({ ...dataUser, [name]: value });
+    setDataUser({ ...dataFormGenerator, [name]: value });
   };
 
   const onSubmit = () => {
-    sendFunc({ name: "addUser", data: dataUser });
-    console.log(dataUser);
+    sendFunc({ name: "dataApi", data: dataFormGenerator });
+    console.log(dataFormGenerator);
   };
 
   return (
     <>
-      <Input
-        autoFocus
-        label="Nombre"
-        variant="bordered"
-        className="input"
-        value={dataUser.name}
-        onChange={() => setData(event)}
-        name="Name"
-      />
-      <Input
-        autoFocus
-        label="Apellido"
-        variant="bordered"
-        className="input"
-        value={dataUser.Lastname}
-        onChange={() => setData(event)}
-        name="Lastname"
-      />
-      <Input
-        autoFocus
-        label="Nombre de Usuario"
-        name="UserName"
-        className="input"
-        value={dataUser.UserName}
-        onChange={() => setData(event)}
-        variant="bordered"
-      />
+      {labelData.map((label, index) => (
+        <Input
+          key={index}
+          autoFocus
+          label={label.label}
+          name={label.val}
+          value={dataFormGenerator[label.val]}
+          className="input"
+          onChange={() => setData(event)}
+          variant="bordered"
+        />
+      ))}
       <Button color="primary" onClick={onSubmit}>
         Agregar
       </Button>
@@ -58,4 +39,6 @@ export const FormGenerator = ({ sendFunc }) => {
 
 FormGenerator.propTypes = {
   sendFunc: PropTypes.func,
+  dataForm: PropTypes.object,
+  labelData: PropTypes.array,
 };

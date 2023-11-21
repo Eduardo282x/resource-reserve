@@ -12,6 +12,8 @@ import "./layout.css";
 export const Layout = () => {
   const navigate = useNavigate();
 
+  const userLogin = JSON.parse(localStorage.getItem('userData'));
+
   const redirect = (path) => {
     if (path == "") {
       localStorage.removeItem("userData");
@@ -19,7 +21,7 @@ export const Layout = () => {
     navigate("/" + path);
   };
 
-  const items = [
+  let items = [
     {
       key: "home",
       label: "Inicio",
@@ -42,6 +44,10 @@ export const Layout = () => {
       color: "delete",
     },
   ];
+
+  if(userLogin.Rol != 1){
+    items = items.filter(path => path.key != 'users')
+  }
 
   return (
     <div>
