@@ -31,6 +31,10 @@ export const Layout = () => {
       label: "Inventario",
     },
     {
+      key: "reserve",
+      label: "Reserva",
+    },
+    {
       key: "users",
       label: "Usuarios",
     },
