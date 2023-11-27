@@ -32,8 +32,8 @@ export const Inventory = () => {
   const col = [
     { columnName: "Description", type: "string" },
     { columnName: "Amount", type: "string" },
-    { columnName: "Professor", type: "string" },
-    { columnName: "Classroom", type: "string" },
+    // { columnName: "Professor", type: "string" },
+    // { columnName: "Classroom", type: "string" },
     { columnName: "Date", type: "date" },
   ];
 
@@ -46,14 +46,14 @@ export const Inventory = () => {
       key: "Amount",
       label: "Cantidad",
     },
-    {
-      key: "Professor",
-      label: "Profesor",
-    },
-    {
-      key: "Classroom",
-      label: "Aula",
-    },
+    // {
+    //   key: "Professor",
+    //   label: "Profesor",
+    // },
+    // {
+    //   key: "Classroom",
+    //   label: "Aula",
+    // },
     {
       key: "Date",
       label: "Fecha ingreso",
