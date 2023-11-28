@@ -32,6 +32,18 @@ export const Users = () => {
 
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
+  
+  const [filterText, setFilterText] = useState('');
+
+  const handleFilterChange = (dataFilter) => {
+    setFilterText(dataFilter);
+  };
+
+  const filteredRows = rows.filter((row) =>
+    row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
+    row.Lastname.toLowerCase().includes(filterText.toLowerCase()) ||
+    row.Rol.toLowerCase().includes(filterText.toLowerCase())
+  );
 
   const col = [
     { columnName: "Name", type: "string" },
@@ -93,21 +105,8 @@ export const Users = () => {
     }
 
     if (data.name == "search") {
-      const filteredData = rows.filter((item) => {
-        if (item) {
-          return (
-            item.Name.toLowerCase().includes(data.data.toLowerCase()) ||
-            item.Lastname.toLowerCase().includes(data.data.toLowerCase()) ||
-            item.Rol.toLowerCase().includes(data.data.toLowerCase())
-          );
-        }
-      });
-
-      setTimeout(() => {
-        setRows([filteredData]);
-        console.log(rows);
-      }, 1500);
-      console.log(filteredData);
+        handleFilterChange(data.data)
+        console.log(data.data)
     }
   };
 
@@ -160,7 +159,7 @@ export const Users = () => {
     <div>
       <Card
         title="Usuarios"
-        dataTable={rows}
+        dataTable={filteredRows}
         columns={columns}
         colMap={col}
         sendFunc={childData}

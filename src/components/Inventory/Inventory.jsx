@@ -20,6 +20,17 @@ export const Inventory = () => {
   const add = [true, true];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const backdrop = "blur";
+
+  const [filterText, setFilterText] = useState('');
+
+  const handleFilterChange = (dataFilter) => {
+      setFilterText(dataFilter);
+  };
+
+  const filteredRows = rows.filter((row) =>
+    row.Description.toLowerCase().includes(filterText.toLowerCase()) 
+  );
+
   // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
   const dataFormGenerator = { Description: "", Amount: 0};
@@ -83,7 +94,7 @@ export const Inventory = () => {
     }
 
     if (data.name == "search") {
-      console.log(data.data);
+      handleFilterChange(data.data)
     }
 
     if (data.name == "dataApi") {
@@ -150,7 +161,7 @@ export const Inventory = () => {
     <div>
       <Card
         title="Inventario"
-        dataTable={rows}
+        dataTable={filteredRows}
         columns={columns}
         colMap={col}
         sendFunc={childData}

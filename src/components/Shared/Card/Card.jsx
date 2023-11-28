@@ -11,6 +11,8 @@ import PropTypes from "prop-types";
 import "./card.css";
 
 export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn }) => {
+  let editBtn = columns.find(edit => edit.key == 'Edit');
+  let deleteBtn = columns.find(edit => edit.key == 'Delete');
   const navigate = useNavigate();
 
   const back = () => {navigate(-1);};
@@ -121,8 +123,9 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                     {col.type == "date" ? parseDate(item[col.columnName]) : ''}
                   </TableCell>
                 ))}
-                {/* <TableCell>{item.Lastname}</TableCell>
-                <TableCell>{item.Rol}</TableCell> */}
+
+
+                {editBtn ? 
                 <TableCell>
                   <IconButton
                     aria-label="toggle password visibility"
@@ -132,9 +135,11 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                   >
                     {<EditIcon />}
                   </IconButton>
-                </TableCell>
+                </TableCell>  : ''}
+
+                {deleteBtn ? 
                 <TableCell>
-                  <IconButton
+                <IconButton
                     aria-label="toggle password visibility"
                     color="error"
                     edge="end"
@@ -142,7 +147,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                   >
                     {<DeleteIcon />}
                   </IconButton>
-                </TableCell>
+                </TableCell>  : ''}
               </TableRow>
             ))}
           </TableBody>
