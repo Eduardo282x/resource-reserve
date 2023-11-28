@@ -39,6 +39,16 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
     return formattedDate;
   }
 
+  const parseTime= (dateString) => {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+  }
+
   return (
     <div className="cardDisplay">
       <div className="titleCard">
@@ -121,6 +131,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                     {/* {col.columnName} */}
                     {col.type == "string" ? (item[col.columnName] ? item[col.columnName] : '-') : ''}
                     {col.type == "date" ? parseDate(item[col.columnName]) : ''}
+                    {col.type == "time" ? parseTime(item[col.columnName]) : ''}
                   </TableCell>
                 ))}
 

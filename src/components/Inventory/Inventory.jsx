@@ -33,7 +33,7 @@ export const Inventory = () => {
 
   // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
-  const dataFormGenerator = { Description: "", Amount: 0};
+  const dataFormGenerator = { Description: "", Amount: ''};
   const labelData = [
     { label: "Descripción", val: "Description", type:'string' },
     { label: "Cantidad", val: "Amount", type:'string' },
@@ -45,30 +45,27 @@ export const Inventory = () => {
     { columnName: "Amount", type: "string" },
     // { columnName: "Professor", type: "string" },
     // { columnName: "Classroom", type: "string" },
-    { columnName: "Date", type: "date" },
+    { columnName: "Use", type: "string" },
+    // { columnName: "Date", type: "date" },
   ];
 
   const columns = [
     {
       key: "Description",
-      label: "Descripción",
+      label: "Recurso",
     },
     {
       key: "Amount",
-      label: "Cantidad",
+      label: "Cantidad Total",
     },
-    // {
-    //   key: "Professor",
-    //   label: "Profesor",
-    // },
-    // {
-    //   key: "Classroom",
-    //   label: "Aula",
-    // },
     {
-      key: "Date",
-      label: "Fecha ingreso",
+      key: "Use",
+      label: "Cantidad Usada",
     },
+    // {
+    //   key: "Date",
+    //   label: "Fecha ingreso",
+    // },
     {
       key: "Edit",
       label: "Editar",
