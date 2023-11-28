@@ -1,28 +1,21 @@
+import {Table,TableHeader,TableColumn,TableBody,TableRow,TableCell,} from "@nextui-org/react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import { Button } from "@nextui-org/react";
+import { Input } from "@nextui-org/react";
 import PropTypes from "prop-types";
 import "./card.css";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@nextui-org/react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import { Button } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@nextui-org/react";
-import AddIcon from "@mui/icons-material/Add";
 
 export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn }) => {
+  let editBtn = columns.find(edit => edit.key == 'Edit');
+  let deleteBtn = columns.find(edit => edit.key == 'Delete');
   const navigate = useNavigate();
 
-  const back = () => {
-    navigate(-1);
-  };
+  const back = () => {navigate(-1);};
 
   const onEdit = (data) => {
     sendFunc({ name: "edit", data: data });
@@ -39,6 +32,22 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
   const onDelete = (data) => {
     sendFunc({ name: "delete", data: data });
   };
+
+  const parseDate = (dateParse) => {
+    const date = new Date(dateParse);
+    const formattedDate = date.toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit'})
+    return formattedDate;
+  }
+
+  const parseTime= (dateString) => {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    return `${formattedHours}:${formattedMinutes} ${ampm}`;
+  }
 
   return (
     <div className="cardDisplay">
@@ -92,6 +101,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
           selectionMode="single"
           defaultSelectedKeys={["2"]}
           color="primary"
+          className="tableStyle"
           // bottomContent={
           //   <div className="flex w-full justify-center">
           //     <Pagination
@@ -117,10 +127,16 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
             {dataTable.map((item,index) => (
               <TableRow key={index} className="textTable">
                 {colMap.map((col) => (
-                  <TableCell key={col}>{item[col]}</TableCell>
+                  <TableCell key={col.columnName}>
+                    {/* {col.columnName} */}
+                    {col.type == "string" ? (item[col.columnName] ? item[col.columnName] : '-') : ''}
+                    {col.type == "date" ? parseDate(item[col.columnName]) : ''}
+                    {col.type == "time" ? parseTime(item[col.columnName]) : ''}
+                  </TableCell>
                 ))}
-                {/* <TableCell>{item.Lastname}</TableCell>
-                <TableCell>{item.Rol}</TableCell> */}
+
+
+                {editBtn ? 
                 <TableCell>
                   <IconButton
                     aria-label="toggle password visibility"
@@ -130,9 +146,11 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                   >
                     {<EditIcon />}
                   </IconButton>
-                </TableCell>
+                </TableCell>  : ''}
+
+                {deleteBtn ? 
                 <TableCell>
-                  <IconButton
+                <IconButton
                     aria-label="toggle password visibility"
                     color="error"
                     edge="end"
@@ -140,7 +158,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
                   >
                     {<DeleteIcon />}
                   </IconButton>
-                </TableCell>
+                </TableCell>  : ''}
               </TableRow>
             ))}
           </TableBody>
@@ -156,5 +174,6 @@ Card.propTypes = {
   columns: PropTypes.array,
   sendFunc: PropTypes.func,
   colMap: PropTypes.array,
-  customBtn: (PropTypes.array = [false, false]),
+  customBtn: PropTypes.array = [false, false],
 };
+

@@ -15,57 +15,74 @@ import Snackbar from "@mui/material/Snackbar";
 import { FormGenerator } from "../Shared/Form/FormGenerator";
 import Swal from "sweetalert2";
 
-export const Inventory = () => {
+export const Reserve = () => {
   const [rows, setRows] = useState([]);
   const add = [true, true];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const backdrop = "blur";
 
-  const [filterText, setFilterText] = useState('');
+  const userLogin = JSON.parse(localStorage.getItem("userData"));
+
+  const [filterText, setFilterText] = useState("");
 
   const handleFilterChange = (dataFilter) => {
-      setFilterText(dataFilter);
+    setFilterText(dataFilter);
   };
 
-  const filteredRows = rows.filter((row) =>
-    row.Description.toLowerCase().includes(filterText.toLowerCase()) 
+  const filteredRows = rows.filter(
+    (row) =>
+      row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
+      row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
 
   // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
-  const dataFormGenerator = { Description: "", Amount: ''};
-  const labelData = [
-    { label: "Descripción", val: "Description", type:'string' },
-    { label: "Cantidad", val: "Amount", type:'string' },
-  ];
+  const dataFormGenerator = {
+    IdProfesor: userLogin.Id,
+    IdInventario: "",
+    Uses: "",
+    HourStart: "",
+    HourEnd: "",
+  };
+
+  const [labelData, setLabelData] = useState([
+    { label: "Recurso", val: "IdInventario", type: "select", dataOption: [] },
+    { label: "Uso", val: "Uses", type: "string" },
+    { label: "Hora Inicio", val: "HourStart", type: "time" },
+    { label: "Hora Fin", val: "HourEnd", type: "time" },
+  ]);
+
   const [open, setOpen] = useState(false);
 
   const col = [
+    { columnName: "Name", type: "string" },
     { columnName: "Description", type: "string" },
-    { columnName: "Amount", type: "string" },
-    // { columnName: "Professor", type: "string" },
-    // { columnName: "Classroom", type: "string" },
-    { columnName: "Use", type: "string" },
-    // { columnName: "Date", type: "date" },
+    { columnName: "Uses", type: "string" },
+    { columnName: "HourStart", type: "time" },
+    { columnName: "HourEnd", type: "time" },
   ];
 
   const columns = [
+    {
+      key: "Name",
+      label: "Profesor",
+    },
     {
       key: "Description",
       label: "Recurso",
     },
     {
-      key: "Amount",
-      label: "Cantidad Total",
+      key: "Uses",
+      label: "Uso",
     },
     {
-      key: "Use",
-      label: "Cantidad Usada",
+      key: "HourStart",
+      label: "Hora Inicio",
     },
-    // {
-    //   key: "Date",
-    //   label: "Fecha ingreso",
-    // },
+    {
+      key: "HourEnd",
+      label: "Hora Fin",
+    },
     {
       key: "Edit",
       label: "Editar",
@@ -78,7 +95,7 @@ export const Inventory = () => {
 
   const childData = (data) => {
     if (data.name == "delete") {
-      deleteInventory(data.data);
+      deleteReserve(data.data);
     }
 
     if (data.name == "edit") {
@@ -86,22 +103,49 @@ export const Inventory = () => {
     }
 
     if (data.name == "add") {
-      onOpen();
-      console.log("Agregar");
+      const selectResource = labelData.find(
+        (input) => input.val == "IdInventario"
+      );
+
+      axios
+        .get("/inventory/show")
+        .then((response) => {
+            selectResource.dataOption = []
+
+          response.data.map((dataUser) => {
+            selectResource.dataOption.push({
+              value: dataUser.Id,
+              label: dataUser.Description,
+            });
+          });
+
+          setLabelData((prevLabelData) =>
+            prevLabelData.map((input) => {
+              if (input.val === "IdInventario") {
+                return { ...input, selectResource };
+              }
+              return input;
+            })
+          );
+          onOpen();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
 
     if (data.name == "search") {
-      handleFilterChange(data.data)
+      handleFilterChange(data.data);
     }
 
     if (data.name == "dataApi") {
       onClose();
       axios
-        .post("/inventory/add", data.data)
+        .post("/reserve/add", data.data)
         .then((response) => {
           console.log(response);
-          setResponseApi(response.data)
-          getInventory();
+          setResponseApi(response.data);
+          getReserve();
         })
         .catch((error) => {
           console.log(error);
@@ -109,9 +153,10 @@ export const Inventory = () => {
     }
   };
 
-  const getInventory = () => {
+  const getReserve = () => {
+    const data = { IdProfesor: 1 };
     axios
-      .get("/inventory/show")
+      .post("/reserve/show", data)
       .then((response) => {
         setRows(response.data);
       })
@@ -120,10 +165,10 @@ export const Inventory = () => {
       });
   };
 
-  const deleteInventory = (inventoryId) => {
+  const deleteReserve = (reserveId) => {
     Swal.fire({
       // title: 'Error!',
-      text: "Estas seguro que deseas eliminar este articulo?",
+      text: "Estas seguro que deseas eliminar esta reserva?",
       // icon: 'error',
       showCancelButton: true,
       confirmButtonText: "Si",
@@ -134,11 +179,11 @@ export const Inventory = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`/inventory/delete/${inventoryId}`)
+          .delete(`/reserve/delete/${reserveId}`)
           .then((response) => {
             setResponseApi(response.data);
             setOpen(true);
-            getInventory();
+            getReserve();
             setTimeout(() => {
               setOpen(false);
             }, 1500);
@@ -151,13 +196,13 @@ export const Inventory = () => {
   };
 
   useEffect(() => {
-    getInventory();
+    getReserve();
   }, []);
 
   return (
     <div>
       <Card
-        title="Inventario"
+        title="Reserva"
         dataTable={filteredRows}
         columns={columns}
         colMap={col}
@@ -192,7 +237,7 @@ export const Inventory = () => {
         autoHideDuration={1000}
         className="snack"
         message={responseApi.message}
-      /> 
+      />
     </div>
   );
 };

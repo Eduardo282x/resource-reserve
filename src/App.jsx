@@ -5,7 +5,10 @@ import { Users } from './components/Users/Users.jsx'
 import { Profile } from './components/Profile/Profile.jsx'
 import { Layout } from './components/Layouts/Layout.jsx'
 import { Inventory } from "./components/Inventory/Inventory.jsx";
+import { ProtectedRouter } from "./components/Protected/ProtectedRouter.jsx";
+import { Reserve } from "./components/Reserve/Reserve.jsx";
 // import {NextUIProvider} from "@nextui-org/react";
+
 export default function App() {
   const router = createBrowserRouter([
     {
@@ -13,7 +16,7 @@ export default function App() {
       element: <Login/>
     },
     {
-      element: <Layout/>,
+      element: <ProtectedRouter><Layout/></ProtectedRouter>,
       children: [
         {
           path: "/home",
@@ -30,6 +33,10 @@ export default function App() {
         {
           path: "/inventory",
           element: <Inventory />
+        },
+        {
+          path: "/reserve",
+          element: <Reserve />
         },
       ]
     }

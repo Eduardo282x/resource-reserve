@@ -1,34 +1,55 @@
-import axios from "../../env/axios-instance";
-import { useEffect, useState, useMemo } from "react";
-import "./users.css";
-import { Card } from "../Shared/Card/Card";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  useDisclosure,
+  // Checkbox,
+  // Input,
+  // Link,
+} from "@nextui-org/react";
 import Snackbar from "@mui/material/Snackbar";
+import axios from "../../env/axios-instance";
+import { useEffect, useState } from "react";
+import { Card } from "../Shared/Card/Card";
 import Swal from "sweetalert2";
+import { FormGenerator } from "../Shared/Form/FormGenerator";
+import "./users.css";
+
 export const Users = () => {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [rows, setRows] = useState([]);
   const add = [true, true];
 
+  const backdrop = "blur";
+  // const [isOpen, setIsOpen] = useState(false)
+  const dataFormGenerator = { UserName: "", Name: "", Lastname: "" };
+  const labelData = [
+    { label: "Nombre de Usuario", val: "UserName", type:'string' },
+    { label: "Nombre", val: "Name", type:'string' },
+    { label: "Apellido", val: "Lastname", type:'string' },
+  ];
+
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
+  
+  const [filterText, setFilterText] = useState('');
 
-  //   const [page, setPage] = useState(1);
-  //   const rowsPerPage = 5;
-
-  //   const pages = Math.ceil(rows.length / rowsPerPage);
-
-  //   const items = useMemo(() => {
-  //     const start = (page - 1) * rowsPerPage;
-  //     const end = start + rowsPerPage;
-
-  //     return rows.slice(start, end);
-  //   }, [page, rows]);
-
-  const clearRows = () => {
-    setRows([]);
-    console.log(rows);
+  const handleFilterChange = (dataFilter) => {
+    setFilterText(dataFilter);
   };
 
-  const col = ['Name','Lastname','Rol',];
+  const filteredRows = rows.filter((row) =>
+    row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
+    row.Lastname.toLowerCase().includes(filterText.toLowerCase()) ||
+    row.Rol.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const col = [
+    { columnName: "Name", type: "string" },
+    { columnName: "Lastname", type: "string" },
+    { columnName: "Rol", type: "string" },
+  ];
 
   const columns = [
     {
@@ -63,25 +84,29 @@ export const Users = () => {
     }
 
     if (data.name == "add") {
+      onOpen();
       console.log("Agregar");
     }
 
-    if (data.name == "search") {
-      const filteredData = rows.filter((item) => {
-        if (item) {
-          return (
-            item.Name.toLowerCase().includes(data.data.toLowerCase()) ||
-            item.Lastname.toLowerCase().includes(data.data.toLowerCase()) ||
-            item.Rol.toLowerCase().includes(data.data.toLowerCase())
-          );
-        }
-      });
+    if (data.name == "dataApi") {
+      // onOpen();
+      console.log(data.data);
+      // setIsOpen(false)
+      onClose();
+      axios
+        .post("/users/add", data.data)
+        .then((response) => {
+          console.log(response);
+          getUser();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
 
-      setTimeout(() => {
-        setRows([filteredData]);
-        console.log(rows);
-      }, 1500);
-      console.log(filteredData);
+    if (data.name == "search") {
+        handleFilterChange(data.data)
+        console.log(data.data)
     }
   };
 
@@ -89,12 +114,7 @@ export const Users = () => {
     axios
       .get("/users/show")
       .then((response) => {
-        clearRows();
-        const tempRows = [...rows];
-        response.data.forEach((user) => {
-          tempRows.push(user);
-        });
-        setRows(tempRows);
+        setRows(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -119,6 +139,7 @@ export const Users = () => {
           .then((response) => {
             setResponseApi(response.data);
             setOpen(true);
+            getUser();
             setTimeout(() => {
               setOpen(false);
             }, 1500);
@@ -130,11 +151,6 @@ export const Users = () => {
     });
   };
 
-  useMemo(() => {
-    // getUser();
-    console.log("cambie");
-  }, [rows]);
-
   useEffect(() => {
     getUser();
   }, []);
@@ -143,12 +159,34 @@ export const Users = () => {
     <div>
       <Card
         title="Usuarios"
-        dataTable={rows}
+        dataTable={filteredRows}
         columns={columns}
         colMap={col}
         sendFunc={childData}
         customBtn={add}
       />
+
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        placement="top-center"
+        backdrop={backdrop}
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex justify-center text-center text-black">
+              Agregar usuario
+            </ModalHeader>
+            <ModalBody>
+              <FormGenerator
+                sendFunc={childData}
+                dataForm={dataFormGenerator}
+                labelData={labelData}
+              />
+            </ModalBody>
+          </>
+        </ModalContent>
+      </Modal>
 
       <Snackbar
         open={open}
