@@ -4,10 +4,10 @@
 
 .login{
     display: flex;
-    width: auto;
-    height: auto;
+    width: 30vw;
+    height: 25rem;
     align-items: center;
-    gap: 2rem;
+    gap: 4rem;
     justify-content: center;
     flex-direction: column;
     background: #fff;
