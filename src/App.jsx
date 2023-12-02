@@ -1,5 +1,5 @@
 import { Login } from "./components/Authentication/Login/Login";
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider, useNavigate } from 'react-router-dom'
 import { Home } from './components/Home/Home.jsx'
 import { Users } from './components/Users/Users.jsx'
 import { Profile } from './components/Profile/Profile.jsx'
@@ -7,6 +7,7 @@ import { Layout } from './components/Layouts/Layout.jsx'
 import { Inventory } from "./components/Inventory/Inventory.jsx";
 import { ProtectedRouter } from "./components/Protected/ProtectedRouter.jsx";
 import { Reserve } from "./components/Reserve/Reserve.jsx";
+import { useEffect } from "react";
 // import {NextUIProvider} from "@nextui-org/react";
 
 export default function App() {
@@ -38,10 +39,25 @@ export default function App() {
           path: "/reserve",
           element: <Reserve />
         },
+        {
+          path: "*",
+          element: <Redirect />
+        },
       ]
     }
   ]);
   return (
     <RouterProvider router={router}/>
   );
+}
+
+
+export const Redirect = () => {
+  const navigate = useNavigate();
+
+  useEffect(()=> {
+    navigate(-1)
+  },[navigate]);
+
+  return null
 }

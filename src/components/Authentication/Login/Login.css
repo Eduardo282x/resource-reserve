@@ -19,8 +19,3 @@
 .titleForm{
     font-size: 2rem;
 }
-
-.snack {
-    display: flex;
-    justify-content: space-between;
-}
