@@ -33,7 +33,7 @@ export const Inventory = () => {
 
   // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
-  const dataFormGenerator = { Description: "", Amount: ''};
+  const [dataFormGenerator, setDataGenetator] = useState({ Description: "", Amount: ''});
   const labelData = [
     { label: "Descripción", val: "Description", type:'string' },
     { label: "Cantidad", val: "Amount", type:'string' },
@@ -82,7 +82,9 @@ export const Inventory = () => {
     }
 
     if (data.name == "edit") {
-      console.log(data.data);
+      setDataGenetator(newData => ({...newData, Description: data.data.Description}))
+      setDataGenetator(newData => ({...newData, Amount: data.data.Amount}))
+      onOpen()
     }
 
     if (data.name == "add") {
