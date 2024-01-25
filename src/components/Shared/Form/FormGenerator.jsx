@@ -3,7 +3,7 @@ import { useState } from "react";
 import "./formgenerator.css";
 import PropTypes from "prop-types";
 
-export const FormGenerator = ({ sendFunc, dataForm, labelData }) => {
+export const FormGenerator = ({ sendFunc, dataForm, labelData,actionForm }) => {
 
   const [dataFormGenerator, setDataUser] = useState(dataForm);
 
@@ -13,7 +13,7 @@ export const FormGenerator = ({ sendFunc, dataForm, labelData }) => {
   };
 
   const onSubmit = () => {
-    sendFunc({ name: "dataApi", data: dataFormGenerator });
+    sendFunc({ name: actionForm, data: dataFormGenerator });
     console.log(dataFormGenerator);
   };
 
@@ -22,13 +22,14 @@ export const FormGenerator = ({ sendFunc, dataForm, labelData }) => {
   const inputSelect = labelData.filter(input => input.type == 'select');
 
   return (
-    <>
+    <div className="w-full h-full flex items-center justify-center flex-col">
       {inputSelect.map((select, index) => (
           <Select 
             label={select.label}
-            className="w-full" 
+            className="w-full my-5" 
             key={index}
             variant="bordered"
+            
             name={select.val}
             onChange={setData}
           >
@@ -65,10 +66,11 @@ export const FormGenerator = ({ sendFunc, dataForm, labelData }) => {
           variant="bordered"
         />
       ))}
-      <Button color="primary" onClick={onSubmit}>
-        Agregar
+
+      <Button className="btnSpace" type="submit" color="primary" onClick={onSubmit}>
+        {actionForm == 'dataApi' ? 'Agregar' : 'Actualizar'}
       </Button>
-    </>
+    </div>
   );
 };
 
@@ -76,4 +78,5 @@ FormGenerator.propTypes = {
   sendFunc: PropTypes.func,
   dataForm: PropTypes.object,
   labelData: PropTypes.array,
+  actionForm: PropTypes.string
 };

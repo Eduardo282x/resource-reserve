@@ -1,3 +1,8 @@
 .input, p, .select{
     color: #000;
+    margin: 1rem 0;
+}
+
+.btnSpace{
+    margin: 1rem;
 }

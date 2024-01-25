@@ -95,6 +95,7 @@ export const Card = ({ title, dataTable, columns, colMap, sendFunc, customBtn })
           )}
         </div>
       </div>
+      
       <div className="bodyCard">
         <Table
           aria-label="users"

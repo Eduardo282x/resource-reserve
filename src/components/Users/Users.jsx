@@ -1,38 +1,23 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  useDisclosure,
-  // Checkbox,
-  // Input,
-  // Link,
-} from "@nextui-org/react";
+import {Modal,ModalContent,ModalHeader,ModalBody,useDisclosure} from "@nextui-org/react";
 import Snackbar from "@mui/material/Snackbar";
 import axios from "../../env/axios-instance";
 import { useEffect, useState } from "react";
 import { Card } from "../Shared/Card/Card";
-import Swal from "sweetalert2";
 import { FormGenerator } from "../Shared/Form/FormGenerator";
+import {add,backdrop,dataFormGenerator,labelData,col,columns} from './users.data'
+import Swal from "sweetalert2";
 import "./users.css";
 
 export const Users = () => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [rows, setRows] = useState([]);
-  const add = [true, true];
-
-  const backdrop = "blur";
-  // const [isOpen, setIsOpen] = useState(false)
-  const dataFormGenerator = { UserName: "", Name: "", Lastname: "" };
-  const labelData = [
-    { label: "Nombre de Usuario", val: "UserName", type:'string' },
-    { label: "Nombre", val: "Name", type:'string' },
-    { label: "Apellido", val: "Lastname", type:'string' },
-  ];
+  const [dataFormGeneratorState, setDataFormGeneratorState] = useState(dataFormGenerator);
+  const [labelDataState, setLabelDataState] = useState(labelData);
+  const [isEdit, setIsEdit] = useState(false);
+  const [actionForm, setActionForm] = useState('dataApi');
 
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
-  
   const [filterText, setFilterText] = useState('');
 
   const handleFilterChange = (dataFilter) => {
@@ -45,53 +30,27 @@ export const Users = () => {
     row.Rol.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  const col = [
-    { columnName: "Name", type: "string" },
-    { columnName: "Lastname", type: "string" },
-    { columnName: "Rol", type: "string" },
-  ];
-
-  const columns = [
-    {
-      key: "Name",
-      label: "Nombre",
-    },
-    {
-      key: "Lastname",
-      label: "Apellido",
-    },
-    {
-      key: "Rol",
-      label: "Rol",
-    },
-    {
-      key: "Edit",
-      label: "Editar",
-    },
-    {
-      key: "Delete",
-      label: "Eliminar",
-    },
-  ];
-
   const childData = (data) => {
     if (data.name == "delete") {
       deleteUser(data.data);
     }
 
     if (data.name == "edit") {
-      console.log(data.data);
+      setIsEdit(true);
+      setActionForm("updateApi");
+      editUser(data.data);
     }
 
     if (data.name == "add") {
       onOpen();
-      console.log("Agregar");
+      setIsEdit(false);
+      setActionForm("dataApi");
+      setDataFormGeneratorState(dataFormGenerator);
+      setLabelDataState(labelData);
     }
 
     if (data.name == "dataApi") {
-      // onOpen();
       console.log(data.data);
-      // setIsOpen(false)
       onClose();
       axios
         .post("/users/add", data.data)
@@ -104,12 +63,23 @@ export const Users = () => {
         });
     }
 
+    if (data.name == "updateApi") {
+      onClose();
+      axios
+        .post(`/users/update/${data.data.Id}`, data.data)
+        .then((response) => {
+          console.log(response);
+          getUser();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
     if (data.name == "search") {
         handleFilterChange(data.data)
-        console.log(data.data)
     }
   };
-
   const getUser = () => {
     axios
       .get("/users/show")
@@ -119,6 +89,16 @@ export const Users = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+  const editUser = (userData) => {
+    onOpen();
+    const dataForm = { 
+      Id: userData.Id,
+      UserName: userData.UserName, 
+      Name: userData.Name, 
+      Lastname: userData.Lastname
+    };
+    setDataFormGeneratorState(dataForm);
   };
 
   const deleteUser = (userId) => {
@@ -174,14 +154,15 @@ export const Users = () => {
       >
         <ModalContent>
           <>
-            <ModalHeader className="flex justify-center text-center text-black">
-              Agregar usuario
+            <ModalHeader className="flex justify-center items-center h-[10rem] text-center text-black">
+              {!isEdit ? 'Agregar usuario' : 'Editar usuario'}
             </ModalHeader>
             <ModalBody>
               <FormGenerator
                 sendFunc={childData}
-                dataForm={dataFormGenerator}
-                labelData={labelData}
+                dataForm={dataFormGeneratorState}
+                labelData={labelDataState}
+                actionForm={actionForm}
               />
             </ModalBody>
           </>
