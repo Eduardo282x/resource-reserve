@@ -23,6 +23,22 @@ export const Reserve = () => {
 
   const userLogin = JSON.parse(localStorage.getItem("userData"));
 
+
+  function parseJwt(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace('-', '+').replace('_', '/');
+      const payloadData = JSON.parse(window.atob(base64));
+  
+      return {
+        payload: payloadData,
+        expiresAt: !(payloadData.exp * 1000 > Date.now())
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
   const [filterText, setFilterText] = useState("");
 
   const handleFilterChange = (dataFilter) => {
@@ -31,14 +47,16 @@ export const Reserve = () => {
 
   const filteredRows = rows.filter(
     (row) =>
-      row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
+      // row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
       row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
 
+  const tokenUncoded = parseJwt(userLogin)
+  console.log(tokenUncoded.payload.Id);
   // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
   const dataFormGenerator = {
-    IdProfesor: userLogin.Id,
+    IdProfesor: tokenUncoded.payload.Id,
     IdInventario: "",
     Uses: "",
     HourStart: "",
@@ -154,11 +172,12 @@ export const Reserve = () => {
   };
 
   const getReserve = () => {
-    const data = { IdProfesor: 1 };
+    const data = { IdProfesor: tokenUncoded.payload.Id };
     axios
       .post("/reserve/show", data)
       .then((response) => {
         setRows(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);

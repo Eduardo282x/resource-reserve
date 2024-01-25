@@ -88,7 +88,7 @@ export const Login = () => {
                 className="inputWidth"
               />
 
-              <Button color="primary" onClick={handleSubmit} isDisabled={btn}>
+              <Button color="primary" type="submit" onClick={handleSubmit} isDisabled={btn}>
                     Iniciar Sesión
               </Button>
             </div>

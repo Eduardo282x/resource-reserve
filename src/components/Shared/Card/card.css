@@ -11,12 +11,13 @@
 
 .cardDisplay{
     width: 90vw;
-    height: 60vh;
+    height: 30rem;
     background: #fff;
     border-radius: 1rem;
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding: 2rem 0;
+    justify-content: flex-start;
     flex-direction: column;
 }
 

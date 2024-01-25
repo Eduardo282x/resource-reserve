@@ -1,80 +1,31 @@
 import { useState, useEffect } from "react";
 import { Card } from "../Shared/Card/Card";
 import axios from "../../env/axios-instance";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  useDisclosure,
-  // Checkbox,
-  // Input,
-  // Link,
-} from "@nextui-org/react";
+import {Modal,ModalContent,ModalHeader,ModalBody,useDisclosure,} from "@nextui-org/react";
+import {col,labelData,backdrop,add,columns,dataForm} from './inventory.data'
 import Snackbar from "@mui/material/Snackbar";
 import { FormGenerator } from "../Shared/Form/FormGenerator";
 import Swal from "sweetalert2";
 
 export const Inventory = () => {
   const [rows, setRows] = useState([]);
-  const add = [true, true];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const backdrop = "blur";
+  const [filterText, setFilterText] = useState("");
+  const [responseApi, setResponseApi] = useState({ message: "" });
+  const [open, setOpen] = useState(false);
 
-  const [filterText, setFilterText] = useState('');
+  const [dataFormGeneratorState, setDataFormGeneratorState] = useState(dataForm);
+  const [labelDataState, setLabelDataState] = useState(labelData);
+  const [isEdit, setIsEdit] = useState(false);
+  const [actionForm, setActionForm] = useState('dataApi');
 
   const handleFilterChange = (dataFilter) => {
-      setFilterText(dataFilter);
+    setFilterText(dataFilter);
   };
 
   const filteredRows = rows.filter((row) =>
-    row.Description.toLowerCase().includes(filterText.toLowerCase()) 
+    row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
-
-  // const [isOpen, setIsOpen] = useState(false)
-  const [responseApi, setResponseApi] = useState({ message: "" });
-  const [dataFormGenerator, setDataGenetator] = useState({ Description: "", Amount: ''});
-  const labelData = [
-    { label: "Descripción", val: "Description", type:'string' },
-    { label: "Cantidad", val: "Amount", type:'string' },
-  ];
-  const [open, setOpen] = useState(false);
-
-  const col = [
-    { columnName: "Description", type: "string" },
-    { columnName: "Amount", type: "string" },
-    // { columnName: "Professor", type: "string" },
-    // { columnName: "Classroom", type: "string" },
-    { columnName: "Use", type: "string" },
-    // { columnName: "Date", type: "date" },
-  ];
-
-  const columns = [
-    {
-      key: "Description",
-      label: "Recurso",
-    },
-    {
-      key: "Amount",
-      label: "Cantidad Total",
-    },
-    {
-      key: "Use",
-      label: "Cantidad Usada",
-    },
-    // {
-    //   key: "Date",
-    //   label: "Fecha ingreso",
-    // },
-    {
-      key: "Edit",
-      label: "Editar",
-    },
-    {
-      key: "Delete",
-      label: "Eliminar",
-    },
-  ];
 
   const childData = (data) => {
     if (data.name == "delete") {
@@ -82,18 +33,21 @@ export const Inventory = () => {
     }
 
     if (data.name == "edit") {
-      setDataGenetator(newData => ({...newData, Description: data.data.Description}))
-      setDataGenetator(newData => ({...newData, Amount: data.data.Amount}))
-      onOpen()
+      setIsEdit(true);
+      setActionForm("updateApi");
+      editInventory(data.data);
     }
 
     if (data.name == "add") {
       onOpen();
-      console.log("Agregar");
+      setIsEdit(false);
+      setActionForm("dataApi");
+      setDataFormGeneratorState(dataForm);
+      setLabelDataState(labelData);
     }
 
     if (data.name == "search") {
-      handleFilterChange(data.data)
+      handleFilterChange(data.data);
     }
 
     if (data.name == "dataApi") {
@@ -102,7 +56,20 @@ export const Inventory = () => {
         .post("/inventory/add", data.data)
         .then((response) => {
           console.log(response);
-          setResponseApi(response.data)
+          setResponseApi(response.data);
+          getInventory();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+
+    if (data.name == "updateApi") {
+      onClose();
+      axios
+        .post(`/inventory/update/${data.data.Id}`, data.data)
+        .then((response) => {
+          console.log(response);
           getInventory();
         })
         .catch((error) => {
@@ -110,7 +77,6 @@ export const Inventory = () => {
         });
     }
   };
-
   const getInventory = () => {
     axios
       .get("/inventory/show")
@@ -121,7 +87,15 @@ export const Inventory = () => {
         console.log(error);
       });
   };
-
+  const editInventory = (inventoryDate) => {
+    onOpen();
+    const dataForm = { 
+      Id: inventoryDate.Id,
+      Description: inventoryDate.Description, 
+      Amount: inventoryDate.Amount, 
+    };
+    setDataFormGeneratorState(dataForm);
+  };
   const deleteInventory = (inventoryId) => {
     Swal.fire({
       // title: 'Error!',
@@ -176,13 +150,14 @@ export const Inventory = () => {
         <ModalContent>
           <>
             <ModalHeader className="flex justify-center text-center text-black">
-              Agregar articulo
+              {!isEdit ? 'Agregar articulo' : 'Editar articulo'}
             </ModalHeader>
             <ModalBody>
               <FormGenerator
                 sendFunc={childData}
-                dataForm={dataFormGenerator}
-                labelData={labelData}
+                dataForm={dataFormGeneratorState}
+                labelData={labelDataState}
+                actionForm={actionForm}
               />
             </ModalBody>
           </>
@@ -194,7 +169,7 @@ export const Inventory = () => {
         autoHideDuration={1000}
         className="snack"
         message={responseApi.message}
-      /> 
+      />
     </div>
   );
 };

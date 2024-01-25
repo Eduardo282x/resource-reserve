@@ -1,0 +1,12 @@
+.fixForm{
+    width: 24rem !important;
+    margin-top: 4rem;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+}
+
+.titleProfile{
+    color: #000;
+    font-weight: bold;
+    font-size: 24px;
+}
