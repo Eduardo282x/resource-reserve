@@ -1,6 +1,5 @@
-import { parseJwt } from "../jwtGet";
 
-const userDataProfile = parseJwt().payload;
+const userDataProfile = JSON.parse(localStorage.getItem('userData'));
 
 export const labelProfile = [
   {
@@ -31,10 +30,10 @@ export const labelProfile = [
 ];
 
 export const dataFormProfile = {
-    Id: userDataProfile.Id,
-    Name: userDataProfile.Name,
-    Lastname: userDataProfile.Lastname,
-    UserName: userDataProfile.UserName,
-    UserPassword: userDataProfile.UserPassword,
-    Rol: userDataProfile.RolDes,
+    Id: userDataProfile ? userDataProfile.Id : '',
+    Name: userDataProfile ? userDataProfile.Name : '',
+    Lastname: userDataProfile ? userDataProfile.Lastname : '',
+    UserName: userDataProfile ? userDataProfile.UserName : '',
+    UserPassword: userDataProfile ? userDataProfile.UserPassword : '',
+    Rol: userDataProfile ? userDataProfile.RolDes : '',
 };

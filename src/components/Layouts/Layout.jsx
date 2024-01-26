@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import {Dropdown,DropdownTrigger,DropdownMenu,DropdownItem,Button,} from "@nextui-org/react";
 import {menuLayout} from './layout.data'
-import {parseJwt} from '../jwtGet';
 import "./layout.css";
 
 export const Layout = () => {
@@ -16,8 +15,8 @@ export const Layout = () => {
     navigate("/" + path);
   };
 
-  const tokenUncoded = parseJwt()
-  if(tokenUncoded.payload.Rol != 1){
+  const userLogin = JSON.parse(localStorage.getItem('userData'));
+  if(userLogin.Rol != 1){
     menu = menu.filter(path => path.key != 'users')
   }
 
