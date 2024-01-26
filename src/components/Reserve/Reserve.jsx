@@ -14,31 +14,12 @@ import {
 import Snackbar from "@mui/material/Snackbar";
 import { FormGenerator } from "../Shared/Form/FormGenerator";
 import Swal from "sweetalert2";
+import {col,columns,dataFormGenerator,add,backdrop,userLogin,
+} from './reserve.data'
 
 export const Reserve = () => {
   const [rows, setRows] = useState([]);
-  const add = [true, true];
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const backdrop = "blur";
-
-  const userLogin = JSON.parse(localStorage.getItem("userData"));
-
-
-  function parseJwt(token) {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace('-', '+').replace('_', '/');
-      const payloadData = JSON.parse(window.atob(base64));
-  
-      return {
-        payload: payloadData,
-        expiresAt: !(payloadData.exp * 1000 > Date.now())
-      };
-    } catch (error) {
-      return null;
-    }
-  }
-
   const [filterText, setFilterText] = useState("");
 
   const handleFilterChange = (dataFilter) => {
@@ -47,21 +28,10 @@ export const Reserve = () => {
 
   const filteredRows = rows.filter(
     (row) =>
-      // row.Name.toLowerCase().includes(filterText.toLowerCase()) ||
       row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  const tokenUncoded = parseJwt(userLogin)
-  console.log(tokenUncoded.payload.Id);
-  // const [isOpen, setIsOpen] = useState(false)
   const [responseApi, setResponseApi] = useState({ message: "" });
-  const dataFormGenerator = {
-    IdProfesor: tokenUncoded.payload.Id,
-    IdInventario: "",
-    Uses: "",
-    HourStart: "",
-    HourEnd: "",
-  };
 
   const [labelData, setLabelData] = useState([
     { label: "Recurso", val: "IdInventario", type: "select", dataOption: [] },
@@ -71,45 +41,6 @@ export const Reserve = () => {
   ]);
 
   const [open, setOpen] = useState(false);
-
-  const col = [
-    { columnName: "Name", type: "string" },
-    { columnName: "Description", type: "string" },
-    { columnName: "Uses", type: "string" },
-    { columnName: "HourStart", type: "time" },
-    { columnName: "HourEnd", type: "time" },
-  ];
-
-  const columns = [
-    {
-      key: "Name",
-      label: "Profesor",
-    },
-    {
-      key: "Description",
-      label: "Recurso",
-    },
-    {
-      key: "Uses",
-      label: "Uso",
-    },
-    {
-      key: "HourStart",
-      label: "Hora Inicio",
-    },
-    {
-      key: "HourEnd",
-      label: "Hora Fin",
-    },
-    {
-      key: "Edit",
-      label: "Editar",
-    },
-    {
-      key: "Delete",
-      label: "Eliminar",
-    },
-  ];
 
   const childData = (data) => {
     if (data.name == "delete") {
@@ -172,7 +103,7 @@ export const Reserve = () => {
   };
 
   const getReserve = () => {
-    const data = { IdProfesor: tokenUncoded.payload.Id };
+    const data = { IdProfesor: userLogin.Id };
     axios
       .post("/reserve/show", data)
       .then((response) => {
