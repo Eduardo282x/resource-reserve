@@ -11,6 +11,8 @@ export const col = [
 
 export const add = [true, true];
 
+//update
+
 export const columns = [
     {
         key: "Name",
