@@ -19,8 +19,12 @@ import {col,columns,dataFormGenerator,add,backdrop,userLogin,
 
 export const Reserve = () => {
   const [rows, setRows] = useState([]);
+  const [btnAdds, setBtnAdds] = useState(add);
+  const [open, setOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [filterText, setFilterText] = useState("");
+  const [actionForm, setActionForm] = useState('dataApi');
+  const [responseApi, setResponseApi] = useState({ message: "" });
 
   const handleFilterChange = (dataFilter) => {
     setFilterText(dataFilter);
@@ -31,8 +35,6 @@ export const Reserve = () => {
       row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  const [responseApi, setResponseApi] = useState({ message: "" });
-
   const [labelData, setLabelData] = useState([
     { label: "Recurso", val: "IdInventario", type: "select", dataOption: [] },
     { label: "Uso", val: "Uses", type: "string" },
@@ -40,9 +42,15 @@ export const Reserve = () => {
     { label: "Hora Fin", val: "HourEnd", type: "time" },
   ]);
 
-  const [open, setOpen] = useState(false);
+  const checkUser = () => {
+    if(userLogin.Rol != 1){
+      const btnProfesor = [false, true];
+      setBtnAdds(btnProfesor);
+    }
+  }
 
   const childData = (data) => {
+    console.log(data);
     if (data.name == "delete") {
       deleteReserve(data.data);
     }
@@ -52,55 +60,50 @@ export const Reserve = () => {
     }
 
     if (data.name == "add") {
-      const selectResource = labelData.find(
-        (input) => input.val == "IdInventario"
-      );
-
-      axios
-        .get("/inventory/show")
-        .then((response) => {
-            selectResource.dataOption = []
-
-          response.data.map((dataUser) => {
-            selectResource.dataOption.push({
-              value: dataUser.Id,
-              label: dataUser.Description,
-            });
-          });
-
-          setLabelData((prevLabelData) =>
-            prevLabelData.map((input) => {
-              if (input.val === "IdInventario") {
-                return { ...input, selectResource };
-              }
-              return input;
-            })
-          );
-          onOpen();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
+      onOpen();
+      setActionForm('dataApi');
+  }
 
     if (data.name == "search") {
       handleFilterChange(data.data);
     }
 
     if (data.name == "dataApi") {
-      onClose();
-      axios
-        .post("/reserve/add", data.data)
-        .then((response) => {
-          console.log(response);
-          setResponseApi(response.data);
-          getReserve();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      addReserve(data.data);
     }
   };
+
+  const getInventory = () => {
+    const selectResource = labelData.find(
+      (input) => input.val == "IdInventario"
+    );
+
+    axios
+      .get("/inventory/show")
+      .then((response) => {
+          selectResource.dataOption = []
+
+        response.data.map((dataUser) => {
+          selectResource.dataOption.push({
+            value: dataUser.Id,
+            label: dataUser.Description,
+          });
+        });
+
+        setLabelData((prevLabelData) =>
+          prevLabelData.map((input) => {
+            if (input.val === "IdInventario") {
+              return { ...input, selectResource };
+            }
+            return input;
+          })
+        );
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const getReserve = () => {
     const data = { IdProfesor: userLogin.Id };
@@ -115,11 +118,23 @@ export const Reserve = () => {
       });
   };
 
+  const addReserve = (newReserve) => {
+    onClose();
+    axios
+      .post("/reserve/add", newReserve)
+      .then((response) => {
+        console.log(response);
+        setResponseApi(response.data);
+        getReserve();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const deleteReserve = (reserveId) => {
     Swal.fire({
-      // title: 'Error!',
       text: "Estas seguro que deseas eliminar esta reserva?",
-      // icon: 'error',
       showCancelButton: true,
       confirmButtonText: "Si",
       confirmButtonColor: "blue",
@@ -146,6 +161,8 @@ export const Reserve = () => {
   };
 
   useEffect(() => {
+    checkUser();
+    getInventory();
     getReserve();
   }, []);
 
@@ -157,7 +174,7 @@ export const Reserve = () => {
         columns={columns}
         colMap={col}
         sendFunc={childData}
-        customBtn={add}
+        customBtn={btnAdds}
       />
 
       <Modal
@@ -176,6 +193,7 @@ export const Reserve = () => {
                 sendFunc={childData}
                 dataForm={dataFormGenerator}
                 labelData={labelData}
+                actionForm={actionForm}
               />
             </ModalBody>
           </>
