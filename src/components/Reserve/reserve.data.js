@@ -1,3 +1,6 @@
+export const backdrop = "blur";
+export const userLogin = JSON.parse(localStorage.getItem("userData"));
+
 export const col = [
     { columnName: "Name", type: "string" },
     { columnName: "Description", type: "string" },
@@ -7,8 +10,6 @@ export const col = [
 ];
 
 export const add = [true, true];
-export const backdrop = "blur";
-export const userLogin = JSON.parse(localStorage.getItem("userData"));
 
 export const columns = [
     {

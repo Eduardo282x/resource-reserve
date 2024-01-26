@@ -1,10 +1,7 @@
 export const col = [
   { columnName: "Description", type: "string" },
   { columnName: "Amount", type: "string" },
-  // { columnName: "Professor", type: "string" },
-  // { columnName: "Classroom", type: "string" },
   { columnName: "Use", type: "string" },
-  // { columnName: "Date", type: "date" },
 ];
 export const labelData = [
   { label: "Descripción", val: "Description", type: "string" },
@@ -27,10 +24,6 @@ export const columns = [
     key: "Use",
     label: "Cantidad Usada",
   },
-  // {
-  //   key: "Date",
-  //   label: "Fecha ingreso",
-  // },
   {
     key: "Edit",
     label: "Editar",

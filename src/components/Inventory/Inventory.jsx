@@ -11,8 +11,11 @@ export const Inventory = () => {
   const [rows, setRows] = useState([]);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [filterText, setFilterText] = useState("");
+  const [btnAdds, setBtnAdds] = useState(add);
   const [responseApi, setResponseApi] = useState({ message: "" });
   const [open, setOpen] = useState(false);
+  const userLogin = JSON.parse(localStorage.getItem("userData"));
+
 
   const [dataFormGeneratorState, setDataFormGeneratorState] = useState(dataForm);
   const [labelDataState, setLabelDataState] = useState(labelData);
@@ -26,6 +29,13 @@ export const Inventory = () => {
   const filteredRows = rows.filter((row) =>
     row.Description.toLowerCase().includes(filterText.toLowerCase())
   );
+
+  const checkUser = () => {
+    if(userLogin.Rol != 1){
+      const btnProfesor = [false, true];
+      setBtnAdds(btnProfesor);
+    }
+  }
 
   const childData = (data) => {
     if (data.name == "delete") {
@@ -127,6 +137,7 @@ export const Inventory = () => {
   };
 
   useEffect(() => {
+    checkUser();
     getInventory();
   }, []);
 
@@ -138,7 +149,7 @@ export const Inventory = () => {
         columns={columns}
         colMap={col}
         sendFunc={childData}
-        customBtn={add}
+        customBtn={btnAdds}
       />
 
       <Modal
